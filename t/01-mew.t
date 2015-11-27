@@ -18,6 +18,12 @@ throws_ok { t::Class1->new( num => "zof" ) } qr/Must be a positive number/,
     is $c->_type, 'text/html', '->_type is correct';
     is $c->_cust, 'Zoffix',    '->_cust is correct';
     ok ! defined $c->_bool,    '->_bool is correct (undefined)';
+
+    isa_ok $c->chained("foo")->chained2( 45 ), 't::Class1',
+        'chained attributes return invocants';
+
+    is $c->chained, "foo", 'chained attributes update values';
+    is $c->chained2, 45,   'chained attributes update values';
 }
 
 {

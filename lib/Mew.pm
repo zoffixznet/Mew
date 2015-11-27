@@ -11,6 +11,8 @@ sub import {
     my $class = shift;
     strictures->import::into(1);
     Moo->import::into(1);
+    MooX->import::into(1, $_) for @_;
+    MooX::ChainedAttributes->import::into(1);
     Types::Standard->import::into(1, qw/:all/);
     Types::Common::Numeric->import::into(1, qw/:all/);
 
@@ -31,7 +33,7 @@ sub import {
                 unless exists $spec{init_arg};
 
             %spec = (
-                is  => 'ro',
+                is  => $spec{chained} ? 'rw' : 'ro' ,
                 isa => $mew_type,
                 %mew_spec,
                 %spec,
@@ -66,7 +68,7 @@ Mew - Moo with sugar on top
     use Mew;
     has  _foo  => PositiveNum;
     has -_bar  => Bool;  # note the minus: it means attribute is not `required`
-    has  _type => Str, (default => 'text/html');
+    has  _type => ( Str, default => 'text/html', chained => 1);
     has  _cust => ( is => 'ro', isa => sub{ 42 } ); # standard Moo `has`
 
     # Is same as:
@@ -74,6 +76,7 @@ Mew - Moo with sugar on top
     use Types::Standard qw/:all/;
     use Types::Common::Numeric qw/:all/;
     use Moo;
+    use MooX::ChainedAttributes;
     use namespace::clean;
 
     has _foo  => (
@@ -88,8 +91,9 @@ Mew - Moo with sugar on top
         isa      => Bool,
     );
     has _type  => (
+        chained  => 1,
         init_arg => 'type',
-        is       => 'ro'
+        is       => 'rw'
         isa      => Str,
         default  => 'text/html',
     );
@@ -117,7 +121,7 @@ Virtually all of the functionality is described in L<Moo>.
     use Mew;
 
 Automatically imports the following modules: L<Moo>, L<strictures>,
-L<Types::Standard>, L<Types::Common::Numeric>,
+L<Types::Standard>, L<Types::Common::Numeric>, L<MooX::ChainedAttributes>,
 and L<namespace::clean>. B<NOTE: in particular the last one.> It'll scrub
 your namespace, thus if you're using things like L<experimental>, you should
 declare them B<after> you C<use Mew>.
@@ -141,7 +145,7 @@ L<Types::Standard> or L<Types::Common::Numeric> as the second argument. Once
 that is done, C<Mew> will add some default settings, which are:
 
     1) Set `isa` to the type you gave
-    2) Set `is` to 'ro'
+    2) Set `is` to 'ro' (or 'rw', if `chained` is set)
     3) Set `require` to 1
     4) Set `init_arg` to the name of the attribute, removing
         the leading underscore, if it's present
@@ -166,6 +170,24 @@ on the left side, using it after the type won't work:
     has _cust => ( Str, default => "WORKS" ); # This is fine too
 
 =for pod_spiffy end warning section
+
+=head2 Method chaining
+
+    package Foo;
+    use Mew;
+    has cost   => ( PostiveNum, chained => 1 );
+    has weight => ( PostiveNum, chained => 1 );
+    has size   => ( Str,        chained => 1 );
+
+    ...
+
+    my $object = Foo->new->cost( 42 )->weight( 45 )->size("X-Large");
+    say $object->size; # prints "X-Large"
+
+To have L<fluent interface|https://en.wikipedia.org/wiki/Fluent_interface>
+or allow "chaining" your attributes, simply add C<< chained => 1 >> option
+to your attribute declaration. B<Note:> this will automatically use
+C<rw> instead of C<ro> for the default of the C<is> option.
 
 =head3 Modify the sugar
 
@@ -217,7 +239,7 @@ to C<bug-Mew at rt.cpan.org>
 
 Part of the code was borrowed from L<Moo>'s innards. L<ew> module is an
 almost-verbatim copy of L<oo> module. Thanks to I<Matt S. Trout (mst)> for
-changing my copypasta of Moo's internals to sane code.
+changing my copypasta of Moo's internals to sane code and other help.
 Props to I<Altreus> for coming up with the name for the module.
 
 The rest is:
