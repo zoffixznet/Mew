@@ -225,8 +225,11 @@ to C<bug-Mew at rt.cpan.org>
 
 =head1 AUTHOR
 
-Part of the code was borrowed from L<Moo>'s innards. Props to Altreus for
-coming up with the name for the module.
+Part of the code was borrowed from L<Moo>'s innards. L<ew> module is an
+almost-verbatim copy of L<oo> module. Props to I<Altreus> for coming up with
+the name for the module.
+
+The rest is:
 
 =for pod_spiffy start author section
 
