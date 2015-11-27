@@ -9,8 +9,7 @@ has -_init    => ( Str, init_arg => 'initizer');
 has -chained  => ( Str, chained => 1 );
 has -chained2 => ( Num, chained => 1 );
 
-has [qw/ar1 ar2/] => Str, ( required => 0, is => 'rw' );
-# has [qw/_ar2/] => Str, ( required => 0 );
+has [qw/ar1 -_ar2/] => Str;
 
 has  _cust => ( is => 'rw', default => 'Zoffix' );
 1;

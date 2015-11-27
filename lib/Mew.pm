@@ -25,23 +25,24 @@ sub import {
 
         my $mew_type;
         $mew_type = shift if @_ % 2 != 0;
-        my %spec = @_;
-        if ( $mew_type ) {
-            my %mew_spec;
-            $mew_spec{required} = 1 unless $name_proto[0] =~ s/^-//;
-            ( $mew_spec{init_arg} = $name_proto[0] ) =~ s/^_//
-                unless exists $spec{init_arg};
+        for my $attr ( @name_proto ) {
+            my %spec = @_;
+            if ( $mew_type ) {
+                my %mew_spec;
+                $mew_spec{required} = 1 unless $attr =~ s/^-//;
+                ( $mew_spec{init_arg} = $attr ) =~ s/^_//
+                    unless exists $spec{init_arg};
 
-            %spec = (
-                is  => $spec{chained} ? 'rw' : 'ro' ,
-                isa => $mew_type,
-                %mew_spec,
-                %spec,
-            );
+                %spec = (
+                    is  => $spec{chained} ? 'rw' : 'ro' ,
+                    isa => $mew_type,
+                    %mew_spec,
+                    %spec,
+                );
+            }
+            $moo_has->( $attr => %spec );
         }
-        # use Acme::Dump::And::Dumper;
-        # print DnD [ \@name_proto => \%spec ];
-        $moo_has->(\@name_proto => %spec);
+
         return;
     };
 
@@ -66,14 +67,20 @@ Mew - Moo with sugar on top
 
 =for pod_spiffy start code section
 
+    #
     # This:
+    #
     use Mew;
+
     has  _foo  => PositiveNum;
     has -_bar  => Bool;  # note the minus: it means attribute is not `required`
-    has  type  => ( Str, default => 'text/html', chained => 1);
-    has  _cust => ( is => 'ro', isa => sub{ 42 } ); # standard Moo `has`
+    has  type  => ( Str, default => 'html', chained => 1); # fluent interface
+    has  _cust => ( is => 'ro', isa => sub{ 42 } );        # standard Moo `has`
+    has [qw/_ar1  -_ar2/] => Str;                          # Multiple args
 
-    # Is same as:
+    #
+    # Is the same as:
+    #
     use strictures 2;
     use Types::Standard qw/:all/;
     use Types::Common::Numeric qw/:all/;
@@ -87,21 +94,38 @@ Mew - Moo with sugar on top
         isa      => PositiveNum,
         required => 1,
     );
+
     has _bar  => (
         init_arg => 'bar',
         is       => 'ro'
         isa      => Bool,
     );
+
     has type  => (
         chained  => 1,
         is       => 'rw'
         isa      => Str,
-        default  => 'text/html',
+        default  => 'html',
     );
+
     has _cust => (
         is  => 'ro',
         isa => sub{ 42 },
     );
+
+    has _ar1  => (
+        init_arg => 'ar1',
+        is       => 'ro'
+        isa      => Str,
+        required => 1,
+    );
+
+    has ar2  => (
+        init_arg => 'ar2',
+        is       => 'ro'
+        isa      => Str,
+    );
+
 
 =for pod_spiffy end code section
 
@@ -139,7 +163,8 @@ exactly as it used to. The sugar won't be enabled in that case.
 =head2 Specify C<isa> type to get sugar
 
     has _cust => Str;
-    has _cust => Str, ( default => "foo" ); # Note: can't use "=>" after Str
+    has _cust => ( Str, default => "foo" ); # Note: can't use "=>" after Str
+    has [qw/_z1  -z2/] => Str;
 
 To get the sugar, you need to specify one of the imported types from either
 L<Types::Standard> or L<Types::Common::Numeric> as the second argument. Once
@@ -160,6 +185,11 @@ Thus, C<< has _cust => Str; >> is equivalent to
         isa      => Str,
         required => 1,
     );
+
+You can specify same settings for multiple attributes by providing
+their names in an arrayref:
+
+    has [qw/_z1  -z2/] => Str;
 
 =for pod_spiffy start warning section
 
