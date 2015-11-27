@@ -13,10 +13,11 @@ throws_ok { t::Class1->new( num => "zof" ) } qr/Must be a positive number/,
     'type is checked';
 
 {
-    my $c = t::Class1->new( num => 42 );
+    my $c = t::Class1->new( num => 42, initizer => 'zoom!' );
     is $c->_num,  42,          '->_num is correct';
     is $c->_type, 'text/html', '->_type is correct';
     is $c->_cust, 'Zoffix',    '->_cust is correct';
+    is $c->_init, 'zoom!',     '->_init is correct (custom init_arg)';
     ok ! defined $c->_bool,    '->_bool is correct (undefined)';
 
     isa_ok $c->chained("foo")->chained2( 45 ), 't::Class1',
@@ -27,11 +28,20 @@ throws_ok { t::Class1->new( num => "zof" ) } qr/Must be a positive number/,
 }
 
 {
-    my $c = t::Class1->new(num => 43, bool => 1, _cust => 'Bar', type => 'fo');
-    is $c->_num,  43,    '->_num is correct';
-    is $c->_type, 'fo',  '->_type is correct';
-    is $c->_cust, 'Bar', '->_cust is correct';
-    is $c->_bool, 1,     '->_bool is correct';
+    my $c = t::Class1->new(
+        num   => 43,
+        bool  => 1,
+        _cust => 'Bar',
+        type  => 'fo',
+        ar1   => 'var1',
+        ar2   => 'var2',
+    );
+    is $c->_num,  43,     '->_num is correct';
+    is $c->_type, 'fo',   '->_type is correct';
+    is $c->_cust, 'Bar',  '->_cust is correct';
+    is $c->_bool, 1,      '->_bool is correct';
+    is $c->ar1,   'var1', '->ar1 is correct';
+    is $c->ar2,   'var2', '->ar2 is correct';
 }
 
 done_testing;

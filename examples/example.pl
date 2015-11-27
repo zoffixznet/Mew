@@ -1,3 +1,18 @@
+package Foo;
+
+use Moo;
+
+has ar1 => ( is => 'ro' );
+has ar2 => ( is => 'ro' );
+
+package main;
+use 5.020;
+my $c = Foo->new( ar1 => 42, ar2 => 44 );
+say $c->ar1;
+say $c->ar2;
+
+__END__
+
 package Class;
 
 use lib qw{lib ../lib};

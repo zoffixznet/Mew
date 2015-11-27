@@ -39,7 +39,9 @@ sub import {
                 %spec,
             );
         }
-        $moo_has->($name_proto[0] => %spec);
+        # use Acme::Dump::And::Dumper;
+        # print DnD [ \@name_proto => \%spec ];
+        $moo_has->(\@name_proto => %spec);
         return;
     };
 
