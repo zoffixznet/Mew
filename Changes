@@ -2,7 +2,7 @@ Revision history for Mew
 
 1.001002  2015-11-27
   - Use saner code (mst)
-  - Import MooX::ChainedAttributes as well (mst)
+  - Allow for chained attributes (mst)
 
 1.001001  2015-11-27
   - First version released on an unsuspecting world
