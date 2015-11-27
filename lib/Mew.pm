@@ -15,11 +15,11 @@ sub import {
     Types::Common::Numeric->import::into(1, qw/:all/);
 
     my $target = caller;
+    my $moo_has = $target->can('has');
     Moo::_install_tracked $target => has => sub {
         my $name_proto = shift;
         my @name_proto = ref $name_proto eq 'ARRAY'
             ? @$name_proto : $name_proto;
-
 
         my $mew_type;
         $mew_type = shift if @_ % 2 != 0;
@@ -37,17 +37,7 @@ sub import {
                 %spec,
             );
         }
-
-        foreach my $name (@name_proto) {
-            # Note that when multiple attributes specified, each attribute
-            # needs a separate \%specs hashref
-            my $spec_ref = @name_proto > 1 ? +{%spec} : \%spec;
-            $class->_constructor_maker_for($target)
-                ->register_attribute_specs($name, $spec_ref);
-            $class->_accessor_maker_for($target)
-                ->generate_method($target, $name, $spec_ref);
-            $class->_maybe_reset_handlemoose($target);
-        }
+        $moo_has->($name_proto[0] => %spec);
         return;
     };
 
@@ -226,8 +216,9 @@ to C<bug-Mew at rt.cpan.org>
 =head1 AUTHOR
 
 Part of the code was borrowed from L<Moo>'s innards. L<ew> module is an
-almost-verbatim copy of L<oo> module. Props to I<Altreus> for coming up with
-the name for the module.
+almost-verbatim copy of L<oo> module. Thanks to I<Matt S. Trout (mst)> for
+changing my copypasta of Moo's internals to sane code.
+Props to I<Altreus> for coming up with the name for the module.
 
 The rest is:
 
@@ -236,6 +227,14 @@ The rest is:
 =for pod_spiffy author ZOFFIX
 
 =for pod_spiffy end author section
+
+=head1 CONTRIBUTORS
+
+=for pod_spiffy start contributors section
+
+=for pod_spiffy author MSTROUT
+
+=for pod_spiffy end contributors section
 
 =head1 LICENSE
 
