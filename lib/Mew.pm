@@ -54,7 +54,7 @@ __END__
 
 =encoding utf8
 
-=for stopwords Znet Zoffix Altreus
+=for stopwords Znet Zoffix Altreus copypasta mst
 
 =head1 NAME
 
