@@ -68,7 +68,7 @@ Mew - Moo with sugar on top
     use Mew;
     has  _foo  => PositiveNum;
     has -_bar  => Bool;  # note the minus: it means attribute is not `required`
-    has  _type => ( Str, default => 'text/html', chained => 1);
+    has  type  => ( Str, default => 'text/html', chained => 1);
     has  _cust => ( is => 'ro', isa => sub{ 42 } ); # standard Moo `has`
 
     # Is same as:
@@ -90,9 +90,8 @@ Mew - Moo with sugar on top
         is       => 'ro'
         isa      => Bool,
     );
-    has _type  => (
+    has type  => (
         chained  => 1,
-        init_arg => 'type',
         is       => 'rw'
         isa      => Str,
         default  => 'text/html',
