@@ -8,14 +8,20 @@ Mew - Moo with sugar on top
     <div style="display: table; height: 91px; background: url(http://zoffix.com/CPAN/Dist-Zilla-Plugin-Pod-Spiffy/icons/section-code.png) no-repeat left; padding-left: 120px;" ><div style="display: table-cell; vertical-align: middle;">
 </div>
 
+    #
     # This:
+    #
     use Mew;
+
     has  _foo  => PositiveNum;
     has -_bar  => Bool;  # note the minus: it means attribute is not `required`
-    has  _type => ( Str, default => 'text/html', chained => 1);
-    has  _cust => ( is => 'ro', isa => sub{ 42 } ); # standard Moo `has`
+    has  type  => ( Str, default => 'html', chained => 1); # fluent interface
+    has  _cust => ( is => 'ro', isa => sub{ 42 } );        # standard Moo `has`
+    has [qw/_ar1  -_ar2/] => Str;                          # Multiple args
 
-    # Is same as:
+    #
+    # Is the same as:
+    #
     use strictures 2;
     use Types::Standard qw/:all/;
     use Types::Common::Numeric qw/:all/;
@@ -29,21 +35,36 @@ Mew - Moo with sugar on top
         isa      => PositiveNum,
         required => 1,
     );
+
     has _bar  => (
         init_arg => 'bar',
         is       => 'ro'
         isa      => Bool,
     );
-    has _type  => (
+
+    has type  => (
         chained  => 1,
-        init_arg => 'type',
         is       => 'rw'
         isa      => Str,
-        default  => 'text/html',
+        default  => 'html',
     );
+
     has _cust => (
         is  => 'ro',
         isa => sub{ 42 },
+    );
+
+    has _ar1  => (
+        init_arg => 'ar1',
+        is       => 'ro'
+        isa      => Str,
+        required => 1,
+    );
+
+    has ar2  => (
+        init_arg => 'ar2',
+        is       => 'ro'
+        isa      => Str,
     );
 
 <div>
@@ -84,7 +105,8 @@ exactly as it used to. The sugar won't be enabled in that case.
 ## Specify `isa` type to get sugar
 
     has _cust => Str;
-    has _cust => Str, ( default => "foo" ); # Note: can't use "=>" after Str
+    has _cust => ( Str, default => "foo" ); # Note: can't use "=>" after Str
+    has [qw/_z1  -z2/] => Str;
 
 To get the sugar, you need to specify one of the imported types from either
 [Types::Standard](https://metacpan.org/pod/Types::Standard) or [Types::Common::Numeric](https://metacpan.org/pod/Types::Common::Numeric) as the second argument. Once
@@ -105,6 +127,11 @@ Thus, `has _cust => Str;` is equivalent to
         isa      => Str,
         required => 1,
     );
+
+You can specify same settings for multiple attributes by providing
+their names in an arrayref:
+
+    has [qw/_z1  -z2/] => Str;
 
 <div>
     <div style="display: table; height: 91px; background: url(http://zoffix.com/CPAN/Dist-Zilla-Plugin-Pod-Spiffy/icons/section-warning.png) no-repeat left; padding-left: 120px;" ><div style="display: table-cell; vertical-align: middle;">

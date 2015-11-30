@@ -1,5 +1,8 @@
 Revision history for Mew
 
+1.001003  2015-11-30
+  - Re-upload to fix indexing issue
+
 1.001002  2015-11-27
   - Use saner code (mst)
   - Allow for chained attributes (mst)
