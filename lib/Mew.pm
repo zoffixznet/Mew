@@ -5,7 +5,7 @@ use strictures 2;
 # VERSION
 
 use Import::Into;
-use base 'Moo';
+use Moo;
 
 sub import {
     my $class = shift;
