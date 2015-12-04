@@ -1,7 +1,7 @@
 package ew;
 
 use strictures 2;
-use Moo::_Utils;
+use Module::Runtime;
 
 # VERSION
 
@@ -29,10 +29,7 @@ BEGIN {
     sub import {
         _mew() if $0 eq '-';
         $package = $_[1] || 'Class';
-        if ($package =~ /^\+/) {
-            $package =~ s/^\+//;
-            _load_module($package);
-        }
+        $package =~ s/^\+// and require_module $package;
     }
     use Filter::Simple sub { s/^/package $package;\nuse Mew;\n/; }
 }

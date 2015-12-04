@@ -2,6 +2,7 @@ Revision history for Mew
 
 1.001004  2015-12-04
   - Fix missing prereqs (#3)
+  - Do not use private Moo classes (#1)
 
 1.001003  2015-11-30
   - Re-upload to fix indexing issue
