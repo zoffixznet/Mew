@@ -26,11 +26,13 @@ sub import {
         my $req = 1;
         my $mew_type;
         $mew_type = shift if @_ % 2 != 0;
-        if ($mew_type and $mew_type->is_parameterized and $mew_type->parent == Types::Standard::Optional()) {
+        if ($mew_type and $mew_type->is_parameterized
+          and $mew_type->parent->strictly_equals(Types::Standard::Optional())) {
             $req = 0;
             $mew_type = $mew_type->type_parameter;
         }
-        elsif ($mew_type and $mew_type == Types::Standard::Optional()) {
+        elsif ($mew_type
+          and $mew_type->strictly_equals(Types::Standard::Optional())) {
             $req = 0;
             $mew_type = Types::Standard::Any();
         }
